@@ -103,7 +103,7 @@ for n in range(22):
 ser.close()
 
 for n in range(22): 
-  out = "dataname: {} data: {}".format(datanames[n], datax[n])
+  out = "dataname: {} data: {}, typedata: {}".format(datanames[n], datax[n], datatypes[n])
   print(out)
 print(datetime.utcfromtimestamp(datax[5]).strftime('%Y-%m-%d %H:%M:%S'))
 #AVAILABLE DATATYPES
