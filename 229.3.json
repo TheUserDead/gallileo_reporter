@@ -1,0 +1,859 @@
+{
+	"archive": {
+		"item": [
+			{
+				"_name": "HV",
+				"_tag": "01",
+				"_format": "uint",
+				"_size": "1"
+			},
+			{
+				"_name": "SV",
+				"_tag": "02",
+				"_format": "uint",
+				"_size": "1"
+			},
+			{
+				"_name": "IMEI",
+				"_tag": "03",
+				"_format": "string",
+				"_size": "15"
+			},
+			{
+				"_name": "ID",
+				"_tag": "04",
+				"_format": "uint",
+				"_size": "2"
+			},
+			{
+				"_name": "PACK",
+				"_tag": "10",
+				"_format": "uint",
+				"_size": "2"
+			},
+			{
+				"_name": "TMD",
+				"_tag": "20",
+				"_format": "dt",
+				"_size": "4"
+			},
+			{
+				"_name": "SAT",
+				"_tag": "30",
+				"_format": "sat",
+				"_size": "1"
+			},
+			{
+				"_name": "LAT",
+				"_tag": "30",
+				"_format": "int",
+				"_size": "4"
+			},
+			{
+				"_name": "LON",
+				"_tag": "30",
+				"_format": "int",
+				"_size": "4"
+			},
+			{
+				"_name": "SPD",
+				"_tag": "33",
+				"_format": "uint",
+				"_size": "2"
+			},
+			{
+				"_name": "COURSE",
+				"_tag": "33",
+				"_format": "uint",
+				"_size": "2"
+			},
+			{
+				"_name": "HEIGHT",
+				"_tag": "34",
+				"_format": "int",
+				"_size": "2"
+			},
+			{
+				"_name": "HDOP",
+				"_tag": "35",
+				"_format": "uint",
+				"_size": "1"
+			},
+			{
+				"_name": "STATDEV",
+				"_tag": "40",
+				"_format": "uint",
+				"_size": "2"
+			},
+			{
+				"_name": "POWER",
+				"_tag": "41",
+				"_format": "uint",
+				"_size": "2"
+			},
+			{
+				"_name": "BAT",
+				"_tag": "42",
+				"_format": "uint",
+				"_size": "2"
+			},
+			{
+				"_name": "TEMPER",
+				"_tag": "43",
+				"_format": "int",
+				"_size": "1"
+			},
+			{
+				"_name": "Acceleration",
+				"_tag": "44",
+				"_format": "uint",
+				"_size": "4"
+			},
+			{
+				"_name": "OUTS",
+				"_tag": "45",
+				"_format": "uint",
+				"_size": "2"
+			},
+			{
+				"_name": "INPS",
+				"_tag": "46",
+				"_format": "uint",
+				"_size": "2"
+			},
+			{
+				"_name": "DRIVER_BEHAVIOUR",
+				"_tag": "47",
+				"_format": "uint",
+				"_size": "4"
+			},
+			{
+				"_name": "INP[0]",
+				"_tag": "50",
+				"_format": "uint",
+				"_size": "2"
+			},
+			{
+				"_name": "INP[1]",
+				"_tag": "51",
+				"_format": "uint",
+				"_size": "2"
+			},
+			{
+				"_name": "INP[2]",
+				"_tag": "52",
+				"_format": "uint",
+				"_size": "2"
+			},
+			{
+				"_name": "INP[3]",
+				"_tag": "53",
+				"_format": "uint",
+				"_size": "2"
+			},
+			{
+				"_name": "INP[4]",
+				"_tag": "54",
+				"_format": "uint",
+				"_size": "2"
+			},
+			{
+				"_name": "INP[5]",
+				"_tag": "55",
+				"_format": "uint",
+				"_size": "2"
+			},
+			{
+				"_name": "INP[6]",
+				"_tag": "56",
+				"_format": "uint",
+				"_size": "2"
+			},
+			{
+				"_name": "INP[7]",
+				"_tag": "57",
+				"_format": "uint",
+				"_size": "2"
+			},
+			{
+				"_name": "OMNIC[0]",
+				"_tag": "58",
+				"_format": "uint",
+				"_size": "2"
+			},
+			{
+				"_name": "OMNIC[1]",
+				"_tag": "59",
+				"_format": "uint",
+				"_size": "2"
+			},
+			{
+				"_name": "REP500",
+				"_tag": "5A",
+				"_format": "uint",
+				"_size": "4"
+			},
+			{
+				"_name": "DataCOLD500",
+				"_tag": "5B",
+				"_format": "DataCOLD500",
+				"_size": "117"
+			},
+			{
+				"_name": "PressurePro",
+				"_tag": "5C",
+				"_format": "PressurePro",
+				"_size": "72"
+			},
+			{
+				"_name": "Dozimeter",
+				"_tag": "5D",
+				"_format": "Dozimeter",
+				"_size": "3"
+			},
+			{
+				"_name": "RS485. FLS 0",
+				"_tag": "60",
+				"_format": "uint",
+				"_size": "2"
+			},
+			{
+				"_name": "RS485. FLS 1",
+				"_tag": "61",
+				"_format": "uint",
+				"_size": "2"
+			},
+			{
+				"_name": "RS485. FLS 2",
+				"_tag": "62",
+				"_format": "uint",
+				"_size": "2"
+			},
+			{
+				"_name": "RS485. FLS 3",
+				"_tag": "63",
+				"_format": "uint",
+				"_size": "3"
+			},
+			{
+				"_name": "RS485. FLS 4",
+				"_tag": "64",
+				"_format": "uint",
+				"_size": "3"
+			},
+			{
+				"_name": "RS485. FLS 5",
+				"_tag": "65",
+				"_format": "uint",
+				"_size": "3"
+			},
+			{
+				"_name": "RS485. FLS 6",
+				"_tag": "66",
+				"_format": "uint",
+				"_size": "3"
+			},
+			{
+				"_name": "RS485. FLS 7",
+				"_tag": "67",
+				"_format": "uint",
+				"_size": "3"
+			},
+			{
+				"_name": "RS485. FLS 8",
+				"_tag": "68",
+				"_format": "uint",
+				"_size": "3"
+			},
+			{
+				"_name": "RS485. FLS 9",
+				"_tag": "69",
+				"_format": "uint",
+				"_size": "3"
+			},
+			{
+				"_name": "RS485. FLS 10",
+				"_tag": "6A",
+				"_format": "uint",
+				"_size": "3"
+			},
+			{
+				"_name": "RS485. FLS 11",
+				"_tag": "6B",
+				"_format": "uint",
+				"_size": "3"
+			},
+			{
+				"_name": "RS485. FLS 12",
+				"_tag": "6C",
+				"_format": "uint",
+				"_size": "3"
+			},
+			{
+				"_name": "RS485. FLS 13",
+				"_tag": "6D",
+				"_format": "uint",
+				"_size": "3"
+			},
+			{
+				"_name": "RS485. FLS 14",
+				"_tag": "6E",
+				"_format": "uint",
+				"_size": "3"
+			},
+			{
+				"_name": "RS485. FLS 15",
+				"_tag": "6F",
+				"_format": "uint",
+				"_size": "3"
+			},
+			{
+				"_name": "DS[0]",
+				"_tag": "70",
+				"_format": "uint",
+				"_size": "2"
+			},
+			{
+				"_name": "DS[1]",
+				"_tag": "71",
+				"_format": "uint",
+				"_size": "2"
+			},
+			{
+				"_name": "DS[2]",
+				"_tag": "72",
+				"_format": "uint",
+				"_size": "2"
+			},
+			{
+				"_name": "DS[3]",
+				"_tag": "73",
+				"_format": "uint",
+				"_size": "2"
+			},
+			{
+				"_name": "DS[4]",
+				"_tag": "74",
+				"_format": "uint",
+				"_size": "2"
+			},
+			{
+				"_name": "DS[5]",
+				"_tag": "75",
+				"_format": "uint",
+				"_size": "2"
+			},
+			{
+				"_name": "DS[6]",
+				"_tag": "76",
+				"_format": "uint",
+				"_size": "2"
+			},
+			{
+				"_name": "DS[7]",
+				"_tag": "77",
+				"_format": "uint",
+				"_size": "2"
+			},
+			{
+				"_name": "DS1923[0]",
+				"_tag": "80",
+				"_format": "ds1923",
+				"_size": "3"
+			},
+			{
+				"_name": "DS1923[1]",
+				"_tag": "81",
+				"_format": "ds1923",
+				"_size": "3"
+			},
+			{
+				"_name": "DS1923[2]",
+				"_tag": "82",
+				"_format": "ds1923",
+				"_size": "3"
+			},
+			{
+				"_name": "DS1923[3]",
+				"_tag": "83",
+				"_format": "ds1923",
+				"_size": "3"
+			},
+			{
+				"_name": "DS1923[4]",
+				"_tag": "84",
+				"_format": "ds1923",
+				"_size": "3"
+			},
+			{
+				"_name": "DS1923[5]",
+				"_tag": "85",
+				"_format": "ds1923",
+				"_size": "3"
+			},
+			{
+				"_name": "DS1923[6]",
+				"_tag": "86",
+				"_format": "ds1923",
+				"_size": "3"
+			},
+			{
+				"_name": "DS1923[7]",
+				"_tag": "87",
+				"_format": "ds1923",
+				"_size": "3"
+			},
+			{
+				"_name": "OmnicommTemp[0]",
+				"_tag": "88",
+				"_format": "uint",
+				"_size": "1"
+			},
+			{
+				"_name": "OmnicommTemp[1]",
+				"_tag": "89",
+				"_format": "uint",
+				"_size": "1"
+			},
+			{
+				"_name": "RS485Temp[0]",
+				"_tag": "8A",
+				"_format": "uint",
+				"_size": "1"
+			},
+			{
+				"_name": "RS485Temp[1]",
+				"_tag": "8B",
+				"_format": "uint",
+				"_size": "1"
+			},
+			{
+				"_name": "RS485Temp[2]",
+				"_tag": "8C",
+				"_format": "uint",
+				"_size": "1"
+			},
+			{
+				"_name": "IB",
+				"_tag": "90",
+				"_format": "uint",
+				"_size": "4"
+			},
+			{
+				"_name": "GEOSTRON",
+				"_tag": "",
+				"_format": "geostron",
+				"_size": "32"
+			},
+			{
+				"_name": "CAN8BITR15",
+				"_tag": "A0",
+				"_format": "uint",
+				"_size": "1"
+			},
+			{
+				"_name": "CAN8BITR16",
+				"_tag": "A1",
+				"_format": "uint",
+				"_size": "1"
+			},
+			{
+				"_name": "CAN8BITR17",
+				"_tag": "A2",
+				"_format": "uint",
+				"_size": "1"
+			},
+			{
+				"_name": "CAN8BITR18",
+				"_tag": "A3",
+				"_format": "uint",
+				"_size": "1"
+			},
+			{
+				"_name": "CAN8BITR19",
+				"_tag": "A4",
+				"_format": "uint",
+				"_size": "1"
+			},
+			{
+				"_name": "CAN8BITR20",
+				"_tag": "A5",
+				"_format": "uint",
+				"_size": "1"
+			},
+			{
+				"_name": "CAN8BITR21",
+				"_tag": "A6",
+				"_format": "uint",
+				"_size": "1"
+			},
+			{
+				"_name": "CAN8BITR22",
+				"_tag": "A7",
+				"_format": "uint",
+				"_size": "1"
+			},
+			{
+				"_name": "CAN8BITR23",
+				"_tag": "A8",
+				"_format": "uint",
+				"_size": "1"
+			},
+			{
+				"_name": "CAN8BITR24",
+				"_tag": "A9",
+				"_format": "uint",
+				"_size": "1"
+			},
+			{
+				"_name": "CAN8BITR25",
+				"_tag": "AA",
+				"_format": "uint",
+				"_size": "1"
+			},
+			{
+				"_name": "CAN8BITR26",
+				"_tag": "AB",
+				"_format": "uint",
+				"_size": "1"
+			},
+			{
+				"_name": "CAN8BITR27",
+				"_tag": "AC",
+				"_format": "uint",
+				"_size": "1"
+			},
+			{
+				"_name": "CAN8BITR28",
+				"_tag": "AD",
+				"_format": "uint",
+				"_size": "1"
+			},
+			{
+				"_name": "CAN8BITR29",
+				"_tag": "AE",
+				"_format": "uint",
+				"_size": "1"
+			},
+			{
+				"_name": "CAN8BITR30",
+				"_tag": "AF",
+				"_format": "uint",
+				"_size": "1"
+			},
+			{
+				"_name": "CAN16BITR5",
+				"_tag": "B0",
+				"_format": "uint",
+				"_size": "2"
+			},
+			{
+				"_name": "CAN16BITR6",
+				"_tag": "B1",
+				"_format": "uint",
+				"_size": "2"
+			},
+			{
+				"_name": "CAN16BITR7",
+				"_tag": "B2",
+				"_format": "uint",
+				"_size": "2"
+			},
+			{
+				"_name": "CAN16BITR8",
+				"_tag": "B3",
+				"_format": "uint",
+				"_size": "2"
+			},
+			{
+				"_name": "CAN16BITR9",
+				"_tag": "B4",
+				"_format": "uint",
+				"_size": "2"
+			},
+			{
+				"_name": "CAN16BITR10",
+				"_tag": "B5",
+				"_format": "uint",
+				"_size": "2"
+			},
+			{
+				"_name": "CAN16BITR11",
+				"_tag": "B6",
+				"_format": "uint",
+				"_size": "2"
+			},
+			{
+				"_name": "CAN16BITR12",
+				"_tag": "B7",
+				"_format": "uint",
+				"_size": "2"
+			},
+			{
+				"_name": "CAN16BITR13",
+				"_tag": "B8",
+				"_format": "uint",
+				"_size": "2"
+			},
+			{
+				"_name": "CAN16BITR14",
+				"_tag": "B9",
+				"_format": "uint",
+				"_size": "2"
+			},
+			{
+				"_name": "CAN[0]",
+				"_tag": "C0",
+				"_format": "uint",
+				"_size": "4"
+			},
+			{
+				"_name": "CAN[1]",
+				"_tag": "C1",
+				"_format": "uint",
+				"_size": "4"
+			},
+			{
+				"_name": "CAN[2]",
+				"_tag": "C2",
+				"_format": "uint",
+				"_size": "4"
+			},
+			{
+				"_name": "CAN[3]",
+				"_tag": "C3",
+				"_format": "uint",
+				"_size": "4"
+			},
+			{
+				"_name": "CAN8BITR0",
+				"_tag": "C4",
+				"_format": "uint",
+				"_size": "1"
+			},
+			{
+				"_name": "CAN8BITR1",
+				"_tag": "C5",
+				"_format": "uint",
+				"_size": "1"
+			},
+			{
+				"_name": "CAN8BITR2",
+				"_tag": "C6",
+				"_format": "uint",
+				"_size": "1"
+			},
+			{
+				"_name": "CAN8BITR3",
+				"_tag": "C7",
+				"_format": "uint",
+				"_size": "1"
+			},
+			{
+				"_name": "CAN8BITR4",
+				"_tag": "C8",
+				"_format": "uint",
+				"_size": "1"
+			},
+			{
+				"_name": "CAN8BITR5",
+				"_tag": "C9",
+				"_format": "uint",
+				"_size": "1"
+			},
+			{
+				"_name": "CAN8BITR6",
+				"_tag": "CA",
+				"_format": "uint",
+				"_size": "1"
+			},
+			{
+				"_name": "CAN8BITR7",
+				"_tag": "CB",
+				"_format": "uint",
+				"_size": "1"
+			},
+			{
+				"_name": "CAN8BITR8",
+				"_tag": "CC",
+				"_format": "uint",
+				"_size": "1"
+			},
+			{
+				"_name": "CAN8BITR9",
+				"_tag": "CD",
+				"_format": "uint",
+				"_size": "1"
+			},
+			{
+				"_name": "CAN8BITR10",
+				"_tag": "CE",
+				"_format": "uint",
+				"_size": "1"
+			},
+			{
+				"_name": "CAN8BITR11",
+				"_tag": "CF",
+				"_format": "uint",
+				"_size": "1"
+			},
+			{
+				"_name": "CAN8BITR12",
+				"_tag": "D0",
+				"_format": "uint",
+				"_size": "1"
+			},
+			{
+				"_name": "CAN8BITR13",
+				"_tag": "D1",
+				"_format": "uint",
+				"_size": "1"
+			},
+			{
+				"_name": "CAN8BITR14",
+				"_tag": "D2",
+				"_format": "uint",
+				"_size": "1"
+			},
+			{
+				"_name": "IB2",
+				"_tag": "D3",
+				"_format": "uint",
+				"_size": "4"
+			},
+			{
+				"_name": "MILEAGE",
+				"_tag": "D4",
+				"_format": "uint",
+				"_size": "4"
+			},
+			{
+				"_name": "IBS",
+				"_tag": "D5",
+				"_format": "uint",
+				"_size": "1"
+			},
+			{
+				"_name": "CAN16BITR0",
+				"_tag": "D6",
+				"_format": "uint",
+				"_size": "2"
+			},
+			{
+				"_name": "CAN16BITR1",
+				"_tag": "D7",
+				"_format": "uint",
+				"_size": "2"
+			},
+			{
+				"_name": "CAN16BITR2",
+				"_tag": "D8",
+				"_format": "uint",
+				"_size": "2"
+			},
+			{
+				"_name": "CAN16BITR3",
+				"_tag": "D9",
+				"_format": "uint",
+				"_size": "2"
+			},
+			{
+				"_name": "CAN16BITR4",
+				"_tag": "DA",
+				"_format": "uint",
+				"_size": "2"
+			},
+			{
+				"_name": "CAN32BITR0",
+				"_tag": "DB",
+				"_format": "uint",
+				"_size": "4"
+			},
+			{
+				"_name": "CAN32BITR1",
+				"_tag": "DC",
+				"_format": "uint",
+				"_size": "4"
+			},
+			{
+				"_name": "CAN32BITR2",
+				"_tag": "DD",
+				"_format": "uint",
+				"_size": "4"
+			},
+			{
+				"_name": "CAN32BITR3",
+				"_tag": "DE",
+				"_format": "uint",
+				"_size": "4"
+			},
+			{
+				"_name": "CAN32BITR4",
+				"_tag": "DF",
+				"_format": "uint",
+				"_size": "4"
+			},
+			{
+				"_name": "CAN32BITR5",
+				"_tag": "F0",
+				"_format": "uint",
+				"_size": "4"
+			},
+			{
+				"_name": "CAN32BITR6",
+				"_tag": "F1",
+				"_format": "uint",
+				"_size": "4"
+			},
+			{
+				"_name": "CAN32BITR7",
+				"_tag": "F2",
+				"_format": "uint",
+				"_size": "4"
+			},
+			{
+				"_name": "CAN32BITR8",
+				"_tag": "F3",
+				"_format": "uint",
+				"_size": "4"
+			},
+			{
+				"_name": "CAN32BITR9",
+				"_tag": "F4",
+				"_format": "uint",
+				"_size": "4"
+			},
+			{
+				"_name": "CAN32BITR10",
+				"_tag": "F5",
+				"_format": "uint",
+				"_size": "4"
+			},
+			{
+				"_name": "CAN32BITR11",
+				"_tag": "F6",
+				"_format": "uint",
+				"_size": "4"
+			},
+			{
+				"_name": "CAN32BITR12",
+				"_tag": "F7",
+				"_format": "uint",
+				"_size": "4"
+			},
+			{
+				"_name": "CAN32BITR13",
+				"_tag": "F8",
+				"_format": "uint",
+				"_size": "4"
+			},
+			{
+				"_name": "CAN32BITR14",
+				"_tag": "F9",
+				"_format": "uint",
+				"_size": "4"
+			}
+		],
+		"_internal_memory_size": "2096128"
+	}
+}
