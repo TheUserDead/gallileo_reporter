@@ -1,1 +1,4 @@
 wifi.sh
+*.bak
+*.*.bak
+profiles/*.bak
