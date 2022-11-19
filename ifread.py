@@ -1,4 +1,4 @@
-import serial, time, json, sys
+import serial, time, json, sys, glob
 from datetime import datetime
 # here we need connect parsefile and get parseschema from device firmware JSON
 #rework with file selector!!!
@@ -33,7 +33,14 @@ def req_ver():
 #need define answer type. Answer can be just ascii text or IF0xxx where x - size of data
 def comm_interface(commandstr):
   ser.write(commandstr.encode())
+
+def file_selector(hw, sv):
+  filelist = glob.glob("profiles/*.json") #get all json files on directory
+  files = [word[9:-5] for word in filelist] # magically get only filenames 
+  print(files)
   
+  template = "{}-{}".format(hw, sv)
+
   
 #connect to serial adapter
 try:
@@ -63,8 +70,9 @@ except serial.serialutil.SerialException:
   print("<!> Com port not found! Check connection!")
   sys.exit()
 
-fileselector = input("ENter file: ")
+#fileselector = input("ENter file: ")
 try: 
+  file_selector("11", "229.3")
   with open('profiles/{}.json'.format(fileselector)) as file:
     dataj = file.read()
   parsedj = json.loads(dataj)
