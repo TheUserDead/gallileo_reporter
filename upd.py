@@ -9,3 +9,4 @@ def get_git_revision_short_hash() -> str:
 
 print(get_git_revision_hash())
 print(get_git_revision_short_hash())
+#tessssssst
