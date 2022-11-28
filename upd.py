@@ -6,3 +6,6 @@ def get_git_revision_hash() -> str:
 
 def get_git_revision_short_hash() -> str:
     return subprocess.check_output(['git', 'rev-parse', '--short', 'HEAD']).decode('ascii').strip()
+
+print(get_git_revision_hash)
+print(get_git_revision_short_hash)
