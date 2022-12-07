@@ -1,4 +1,4 @@
-import serial, time, json, sys, glob, logging
+import serial, time, json, sys, glob, logging, pickle
 from datetime import datetime
 
 logging.basicConfig(level=logging.DEBUG, filename="g_conn.log",filemode="a")
@@ -54,15 +54,17 @@ def req_ver():
   print("<i> Request version")
   hhw = comm_interface("hardversion").split("=")
   ssv = comm_interface("status").split("=")
-  print(hhw)
-  print(ssv)
-  software = (ssv[1])[0:][:3]
+  ha = hhw[1]
+  sv = ssv[1]
+  ha = ha.split(",")
+  sv = sv.split(".")
+  software = sv[0]
   global soft 
   soft = int(software)
-  hardware = (hhw[1])[0:][:2]
-  print(hardware)
+  hardware = ha[0]
   global hard
   hard = int(hardware)
+  print("Detected version: {}-{}".format(hard, soft))
   
 #need define answer type. Answer can be just ascii text or IF0xxx where x - size of data
 def comm_interface(commandstr):
@@ -79,10 +81,11 @@ def comm_interface(commandstr):
       print("has data answer")
 
     if ans != "IF":
-      print("has ascii answer")
       ans = ser.read(ser.in_waiting)
       return str(ans)
 
+def report_ext():
+  x = requests.get("http://192.168.88.40:5055/?id={}&lat={}&lon={}&timestamp={}&hdop={}&altitude={}&speed={}".format(ids, lat, lon, time, hdop, alt, speed))
 
 def file_attach():
   print("<i> File attach")
@@ -94,7 +97,6 @@ def file_attach():
     for sublist in filesss:
       for item in sublist:
         l.append(int(item))
-    print(l)
     nearfilefwver = l[min(range(len(l)), key=lambda i: abs(l[i]- soft))] # find near digits of sv
     global seletedschemafle
     seletedschemafle = "{}-{}.json".format(hard, nearfilefwver) # here we assemble full fle name
@@ -129,14 +131,6 @@ def serialconn():
       init_comm()
     if comreq:
       req_ver()
-      if hard != 0 and soft != 0:
-        file_attach()
-        #req_arch()
-        #serialcmd = input("ENter pages: ").split('-')
-        # batch_req(int(serialcmd[0]), int(serialcmd[1]))
-        batch_req(1, 1000)
-      else:
-        logging.warn("<!> Cannot attach JSON file!")
   except serial.serialutil.SerialException as err:
     logging.critical("<!> Com port not found! Check connection!")
     sys.exit()
@@ -155,8 +149,24 @@ def req_arch():
      s = ser.read(ssz) # read data stream from serial counted by received size
      print(s.hex())
      parser(s)
-  
-  
+
+def start_dump():
+  print("<i> Start dump")
+  if hard != 0 and soft != 0:
+    file_attach()
+    #req_arch()
+    #serialcmd = input("ENter pages: ").split('-')
+    #batch_req(int(serialcmd[0]), int(serialcmd[1]))
+    batch_req(1, 1000)
+  else:
+    logging.warn("<!> Cannot attach JSON file!")
+
+def verify_gps(value):
+    if -90.000000 <= value <= 90.000000 and value == value:
+        return True
+    return False
+
+
 def parser(dataz, cls):
   #print("<i> Parser")
   #parse data with JSON loaded schema
@@ -180,14 +190,23 @@ def parser(dataz, cls):
         bytebuff.reverse() #-------------
         if datatypes[n] == "uint":
           datax[n] = int.from_bytes(bytebuff, "big", signed=False)
-        if datatypes[n] == "int":
+        if datatypes[n] == "int": #note: LAT & LON has int type
           datax[n] = int.from_bytes(bytebuff, "big", signed=True)
+          # verify coordinates!
+          if datanames[n] == "LAT" or datanames[n] == "LON":
+            datax[n] = datax[n]/1000000
+            if verify_gps(datax[n]):
+              pass
+            else:
+              datax[n] = 0.000001
       if datasizes[n] == 1:
         datax[n] = int(datax[n], 16)
     if datatypes[n] == "string":
       if datasizes[n] < 20:
         bytebuff = bytearray.fromhex(datax[n])
         datax[n] = bytebuff.decode()
+      if datasizes[n] >= 20:
+        datax[n] = "PLACEHOLDER"
     if datatypes[n] == "dt": ## this datatype in latest version has little-endian against big-endian in old devices. 
       #time where we live, starts from 1 digit. That's how i verify byteorder in time representation
       #buff = int(datax[n], 16) # test convert
@@ -195,17 +214,25 @@ def parser(dataz, cls):
       bytebuff = bytearray.fromhex(datax[n])
       #bytebuff.reverse()
       buff = int.from_bytes(bytebuff, "big", signed=False)
-      magic = "1"
-      if str(buff)[0] == magic:
-        print("data from big")
-        if str(buff)[0] != magic:
-          print("data from little")
+      try:
+        x = datetime.utcfromtimestamp(buff)
+        datax[n] = buff
+        if x.year <= 2000:
+          #print("{}-2000---{}".format(x.year, datetime.utcfromtimestamp(buff)))
+          datax[n] = buff
+        if x.year > datetime.now().year:
           buff = int.from_bytes(bytebuff, "little", signed=False)
+          #print("{}-{}---{}".format(x.year, datetime.now().year, datetime.utcfromtimestamp(buff)))
+          datax[n] = buff
+      except OverflowError:
+        buff = int.from_bytes(bytebuff, "little", signed=False)
+        datax[n] = buff
 #############################
   #print("-----------PARSED DATA!------------")
   #for n in range(22): 
   #  out = "dataname: {} data: {}".format(datanames[n], datax[n])
     #print(out)
+
     #print(datetime.utcfromtimestamp(datax[5]).strftime('%Y-%m-%d %H:%M:%S'))
   #datout = "{}".format(datax)
   #print(datax)
@@ -236,6 +263,7 @@ def batch_req(start, end):
       if n == cls: cls = True
       parser(s, cls)
 
+lauArgv = sys.argv
 start_time = time.time()
 global datasizes
 datasizes = [];
@@ -243,8 +271,30 @@ global datanames
 datanames = [];
 global datatypes
 datatypes = [];
+try:
+  lauArgv[1]
+except IndexError:
+  print("Script need params!")
+  sys.exit()
+global ser
 serialconn()
-ser.close()
+
+if lauArgv[1] == "dumptest":
+  start_dump()
+  ser.close()
+
+if lauArgv[1] == "dump":
+  file_attach()
+  batch_req(int(lauArgv[2]), int(lauArgv[3]))
+
+if lauArgv[1] == "comm":
+  comreq = check_comm();
+  if comreq == False:
+    init_comm()
+  if comreq:
+    print(comm_interface(lauArgv[2]))
+
+print(lauArgv)
 print("--- %s seconds ---" % (time.time() - start_time))
 
 
