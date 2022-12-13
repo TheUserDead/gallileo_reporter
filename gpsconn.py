@@ -1,4 +1,4 @@
-import serial, time, json, sys, glob, logging, pickle
+import serial, time, json, sys, glob, logging, pickle, requests
 from datetime import datetime
 
 logging.basicConfig(level=logging.DEBUG, filename="g_conn.log",filemode="a")
@@ -84,8 +84,13 @@ def comm_interface(commandstr):
       ans = ser.read(ser.in_waiting)
       return str(ans)
 
-def report_ext():
-  x = requests.get("http://192.168.88.40:5055/?id={}&lat={}&lon={}&timestamp={}&hdop={}&altitude={}&speed={}".format(ids, lat, lon, time, hdop, alt, speed))
+def report_ext(ids, lat, lon, time, hdop, alt, speed):
+  print(speed)
+  x = requests.get("http://188.190.220.244:5055/?id={}&lat={}&lon={}&timestamp={}&hdop={}&altitude={}&speed={}".format(ids, lat, lon, time, hdop, alt, speed))
+  if x == "<Response [200]>":
+    pass
+  if x == "<Response [400]>":
+    print("<!> Error when send GET reuest!")
 
 def file_attach():
   print("<i> File attach")
@@ -177,10 +182,10 @@ def parser(dataz, cls):
   for n in range(22):
     datax.append(dataz[pointerjson:][:datasizes[n]].hex())
     pointerjson = pointerjson + datasizes[n]
-  #print("------UNCONVERTED DATA!----------")
-  #for n in range(22): 
-  #  out = "dataname: {} data: {}".format(datanames[n], datax[n])
-  #  print(out)
+  # print("------UNCONVERTED DATA!----------")
+  # for n in range(22): 
+  #   out = "dataname: {} data: {}".format(datanames[n], datax[n])
+  #   print(out)
 
   #define some vars before read convert type and pre-handle data using data type
   for n in range(22):
@@ -199,6 +204,10 @@ def parser(dataz, cls):
               pass
             else:
               datax[n] = 0.000001
+              print("<!> Wring data tetected!: {}".format(datax[n]))
+        if datanames[n] == "SPD":
+          datax[n] = (datax[n] / 10) / 3.6
+          datax[n] = round(datax[n], 2)
       if datasizes[n] == 1:
         datax[n] = int(datax[n], 16)
     if datatypes[n] == "string":
@@ -208,30 +217,28 @@ def parser(dataz, cls):
       if datasizes[n] >= 20:
         datax[n] = "PLACEHOLDER"
     if datatypes[n] == "dt": ## this datatype in latest version has little-endian against big-endian in old devices. 
-      #time where we live, starts from 1 digit. That's how i verify byteorder in time representation
       #buff = int(datax[n], 16) # test convert
       #print(buff)
       bytebuff = bytearray.fromhex(datax[n])
       #bytebuff.reverse()
       buff = int.from_bytes(bytebuff, "big", signed=False)
       try:
-        x = datetime.utcfromtimestamp(buff)
-        datax[n] = buff
-        if x.year <= 2000:
-          #print("{}-2000---{}".format(x.year, datetime.utcfromtimestamp(buff)))
+        x = datetime.utcfromtimestamp(buff) #current time
+        if x.year == 2022:
+          global timeclotch;
           datax[n] = buff
-        if x.year > datetime.now().year:
+        if x.year != 2022:
           buff = int.from_bytes(bytebuff, "little", signed=False)
-          #print("{}-{}---{}".format(x.year, datetime.now().year, datetime.utcfromtimestamp(buff)))
           datax[n] = buff
       except OverflowError:
+        #print("!!!====-{}---{}------{}".format(datetime.now().year, datetime.utcfromtimestamp(buff), datax[n]))
         buff = int.from_bytes(bytebuff, "little", signed=False)
         datax[n] = buff
 #############################
-  #print("-----------PARSED DATA!------------")
-  #for n in range(22): 
-  #  out = "dataname: {} data: {}".format(datanames[n], datax[n])
-    #print(out)
+  # print("-----------PARSED DATA!------------")
+  # for n in range(22): 
+  #   out = "dataname: {} data: {}".format(datanames[n], datax[n])
+  #   print(out)
 
     #print(datetime.utcfromtimestamp(datax[5]).strftime('%Y-%m-%d %H:%M:%S'))
   #datout = "{}".format(datax)
@@ -240,6 +247,7 @@ def parser(dataz, cls):
     
 
 def file_dump(datain, cls):
+  report_ext(datain[2], datain[8], datain[9], datain[6], datain[13], datain[11], datain[10])
   with open('datafile.log', 'a') as f:
     #print('{}'.format(datain), file=f)
     f.write("{}\n".format(datain))
@@ -271,6 +279,9 @@ global datanames
 datanames = [];
 global datatypes
 datatypes = [];
+global timeclotch; #clotch with time definition
+timeclotch = 3
+
 try:
   lauArgv[1]
 except IndexError:
