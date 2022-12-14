@@ -247,7 +247,7 @@ def parser(dataz, cls):
     
 
 def file_dump(datain, cls):
-  report_ext(datain[2], datain[8], datain[9], datain[6], datain[13], datain[11], datain[10])
+  #report_ext(datain[2], datain[8], datain[9], datain[6], datain[13], datain[11], datain[10])
   with open('datafile.log', 'a') as f:
     #print('{}'.format(datain), file=f)
     f.write("{}\n".format(datain))
@@ -268,7 +268,7 @@ def batch_req(start, end):
       # print("size = {}".format(ssz)) #report this to console
       s = ser.read(ssz) # read data stream from serial counted by received size
       #print(s.hex())
-      if n == cls: cls = True
+      if n == end: cls = True
       parser(s, cls)
 
 lauArgv = sys.argv
