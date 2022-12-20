@@ -1,0 +1,32 @@
+{
+    "mqtt": {
+        "mqttAddr": "upd.sysspec.ru",
+        "name": "car035",
+        "pass": "232456Qz"
+    },
+    "server": {
+        "addr": "upd.sysspec.ru"
+    },
+    "driver": {
+        "car_num": 35,
+        "driverid": 1
+    },
+    "archive": {
+        "dateStart": "none",
+        "dateEnd": "none",
+        "dateReported": "none"
+    },
+    "states": {
+        "drive": 0,
+        "mileage": 0,
+        "wheelCounter": 0,
+        "timeUpdated": "1970-01-01 0:00:00"
+    },
+    "commandsQueue" : [
+        {
+            "command_id": 1,
+            "command": "status",
+            "exec": true
+        }
+    ]
+}

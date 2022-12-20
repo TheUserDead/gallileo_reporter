@@ -3,6 +3,14 @@ from datetime import datetime
 #clotch with time definition bcz network unavailable most of time
 global timeclotch; 
 timeclotch = 2022
+seletedschemafle = 0
+#global datasizes
+datasizes = [];
+#global datanames
+datanames = [];
+#global datatypes
+datatypes = [];
+
 
 def file_attach():
   print("<i> File attach")

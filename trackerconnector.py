@@ -1,5 +1,4 @@
 import glob
-import json 
 import logging
 import pickle
 import sys
@@ -7,24 +6,17 @@ import time
 
 from requester import *
 from parsingmod import *
+from readsettings import *
 
 logging.basicConfig(level=logging.INFO, filename="gconnector.log",filemode="a", format="%(asctime)s %(levelname)s %(message)s")
 
 start_time = time.time()
 
-#json dataschematic globals
-global datasizes
-datasizes = [];
-global datanames
-datanames = [];
-global datatypes
-datatypes = [];
-global seletedschemafle
 try:
   serialconn()
 except serial.serialutil.SerialException as err:
   logging.critical("<!> Com port not found! Check connection!")
-  sys.exit()
+  sys.exit()#need exit or try again? I think need report this data-------------REWORK
 try:
   while 1:
     try:
