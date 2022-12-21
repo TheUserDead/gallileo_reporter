@@ -1,6 +1,11 @@
 import serial
 import time
 import pickle
+import os
+from datetime import datetime, timedelta
+
+from readsettings import *
+
 #for access object anywhere
 global ser
 
@@ -152,7 +157,13 @@ def parsestatus(data, type):
     pack = x[2][5:]
     time = x[3][5:]
     date = x[4]
-    print(pack, time, date)
+    # time = time.split(":")
+    #time[0] = int(time[0]) + 3 #>>> !!! OUR TIMEZONE !!!
+    #timeconv = time[0] + ":" + time[1] 
+    timeee = datetime.strptime('{} {}'.format(date, time), '%d.%m.%y %H:%M:%S')
+    timeee = timeee + timedelta(hours=3)
+    # print(pack, time, timeconv)
+    print(os.system('date --set="{}"'.format(timeee)))
   if type == 2:
     x = data.split(",")
     zero_in = x[0][10:]
@@ -160,10 +171,13 @@ def parsestatus(data, type):
     print(zero_in, one_in)
     env.append(zero_in)
     env.append(one_in)
+    settingsUpdate("states", "wheelCounter", zero_in)
+    settingsUpdate("states", "drive", one_in)
   if type == 3:
     x = data.split(",")
-    mileage = x[3][8:] #need rework!
+    mileage = x[3][8:] #need rework!--------
     print(mileage)
+    settingsUpdate("states", "mileage", mileage)
     env.append(mileage)
   dumpdata(env)
   print(env)

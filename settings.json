@@ -5,7 +5,8 @@
         "pass": "232456Qz"
     },
     "server": {
-        "addr": "upd.sysspec.ru"
+        "addr": "upd.sysspec.ru",
+        "archUrl": "http://upd.sysspec.ru:5055/?"
     },
     "driver": {
         "car_num": 35,
