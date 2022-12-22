@@ -1,6 +1,6 @@
 import json
 
-def settingsread(type):
+def settingsRead(type):
   try:
     with open('settings.json') as file:
       settingsj = file.read()
@@ -67,3 +67,4 @@ def settingsUpdate(what, who, data):
     with open("settings_test.json", "w") as outfile:
       json.dump(psettj, outfile, indent=2)
   finally:
+    pass

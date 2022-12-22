@@ -2,6 +2,7 @@ import json
 from readsettings import *
 import logging
 import paho.mqtt.client as mqtt
+import time
 
 logging.basicConfig(level=logging.INFO, filename="greporter.log",filemode="a", format="%(asctime)s %(levelname)s %(message)s")
 
@@ -22,19 +23,26 @@ def on_connect(client, userdata, flagc, rc):
   client.subscribe("EnvMetrics/CarTrackers/{}/comm".format(mqttData[1]))
   client.publish("EnvMetrics/CarTrackers/{}/status".format(mqttData[1]), payload="online", qos=0, retain=False)
 
-try:
-  mqttData = [];
-  mqttData = settingsread("mqtt")
-  client = mqtt.Client()
-  client.on_connect = on_connect
-  client.on_message = on_message
-  mqttdata = settingsread("mqtt")
-  client.username_pw_set(mqttData[1], password=mqttData[2])
-  client.connect(mqttData[0], 1884, 60)
-  client.loop_forever()
-  client.will_set("EnvMetrics/CarTrackers/{}/status".format(mqttData[1]), payload="offline", qos=0, retain=False)
-except ConnectionRefusedError:
-  print("Cannot connect to MQTT server!")
-  logging.warn("Cannot connect to MQTT server!")
-except KeyboardInterrupt:
-  client.publish("EnvMetrics/CarTrackers/{}/status".format(mqttData[1]), payload="offline", qos=0, retain=False)
+while 1:
+  time.sleep(3)
+  states = settingsRead("states")
+  print(states)
+  try:
+    mqttData = [];
+    mqttData = settingsRead("mqtt")
+    client = mqtt.Client()
+    client.on_connect = on_connect
+    client.on_message = on_message
+    mqttdata = settingsRead("mqtt")
+    client.username_pw_set(mqttData[1], password=mqttData[2])
+    # client.connect(mqttData[0], 1884, 60)
+    client.connect_async(mqttData[0], 1884, 60)
+    print("Settings1")
+    client.loop_start()
+    print("Settings2")
+    client.will_set("EnvMetrics/CarTrackers/{}/status".format(mqttData[1]), payload="offline", qos=0, retain=False)
+  except ConnectionRefusedError:
+    print("Cannot connect to MQTT server!")
+    logging.warn("Cannot connect to MQTT server!")
+  except KeyboardInterrupt:
+    client.publish("EnvMetrics/CarTrackers/{}/status".format(mqttData[1]), payload="offline", qos=0, retain=False)
