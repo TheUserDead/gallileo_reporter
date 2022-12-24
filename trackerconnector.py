@@ -24,7 +24,7 @@ try:
       if comreq == False:
         init_comm()
       if comreq:
-        get_status()
+        get_status(0) # 0 - is default
     except serial.serialutil.SerialException as err:
       logging.critical("<!> Com port not found! Check connection! \n Repeat in 3 sec...")
       time.sleep(3)
@@ -32,7 +32,11 @@ try:
     except KeyboardInterrupt:
       print("--- %s seconds ---" % (time.time() - start_time))
       sys.exit()
-    time.sleep(5)
+    time.sleep(10)
+    reslt = settingsRead("archive")
+    ##???????
+    print(carMove)
+
   
 except KeyboardInterrupt:
     print("--- %s seconds ---" % (time.time() - start_time))

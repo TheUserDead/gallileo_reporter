@@ -24,7 +24,7 @@ def on_connect(client, userdata, flagc, rc):
   client.publish("EnvMetrics/CarTrackers/{}/status".format(mqttData[1]), payload="online", qos=0, retain=False)
 
 while 1:
-  time.sleep(3)
+  time.sleep(30)
   states = settingsRead("states")
   print(states)
   try:
@@ -37,9 +37,7 @@ while 1:
     client.username_pw_set(mqttData[1], password=mqttData[2])
     # client.connect(mqttData[0], 1884, 60)
     client.connect_async(mqttData[0], 1884, 60)
-    print("Settings1")
     client.loop_start()
-    print("Settings2")
     client.will_set("EnvMetrics/CarTrackers/{}/status".format(mqttData[1]), payload="offline", qos=0, retain=False)
   except ConnectionRefusedError:
     print("Cannot connect to MQTT server!")

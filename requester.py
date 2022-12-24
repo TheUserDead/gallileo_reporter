@@ -8,6 +8,7 @@ from readsettings import *
 
 #for access object anywhere
 global ser
+global carMove
 
 
 def check_comm():
@@ -87,38 +88,37 @@ def init_comm():
     logging.warn("<!> Cannot init com port!")
     sys.exit()
   
-def req_arch():
-  serialcmd = input("ENter page: ")
-  x = "IF {}".format(serialcmd)
-  print(x)
-  ser.write(x.encode())
-  #s = ser.read(7) #bytes size here
-  s = ser.read_until(b'\x20') #verify start packet
-  if s.decode() == "IF ":
-     s = ser.read_until(b'\x20') #bytes size heree
-     ssz = int(s.decode('utf-8')) #convert to right data type
-     print("size = {}".format(ssz)) #report this to console
-     s = ser.read(ssz) # read data stream from serial counted by received size
-     print(s.hex())
-     parser(s)
+# def req_arch():
+#   serialcmd = input("ENter page: ")
+#   x = "IF {}".format(serialcmd)
+#   print(x)
+#   ser.write(x.encode())
+#   #s = ser.read(7) #bytes size here
+#   s = ser.read_until(b'\x20') #verify start packet
+#   if s.decode() == "IF ":
+#      s = ser.read_until(b'\x20') #bytes size heree
+#      ssz = int(s.decode('utf-8')) #convert to right data type
+#      print("size = {}".format(ssz)) #report this to console
+#      s = ser.read(ssz) # read data stream from serial counted by received size
+#      print(s.hex())
+#      parser(s)
 
 def file_dump(datain, cls):
-  report_ext(datain[2], datain[8], datain[9], datain[6], datain[13], datain[11], datain[10])
+  # report_ext(datain[2], datain[8], datain[9], datain[6], datain[13], datain[11], datain[10])
   with open('datafile.log', 'a') as f:
     #print('{}'.format(datain), file=f)
     f.write("{}\n".format(datain))
     if cls == True: f.close()
 
-# def batch_req(start, end):
-#   print("<i> Batch request")
-#   cls = False
-#   end = end + 1
-#   for n in range(start, end):
-#     #print(n)
-#     x = "IF {}".format(n)
-#     comm_interface(x)
-#       if n == end: cls = True
-#       parser(s, cls) #???????? connected?
+def batch_req(start, end):
+  print("<i> Batch request")
+  cls = False
+  end = end + 1
+  for n in range(start, end):
+    x = "IF {}".format(n)
+    comm_interface(x)
+    if n == end: cls = True
+    parser(s, cls) #???????? connected?
 
 def comm_interface(commandstr):
   #print("<i> Command Interface")
@@ -142,48 +142,43 @@ def comm_interface(commandstr):
       ans = ser.read(ser.in_waiting)
       return str(ans)
 
-def get_status():
-  parsestatus(comm_interface("status"), 1)
-  time.sleep(0.5)
-  parsestatus(comm_interface("inall"), 2)
-  time.sleep(0.5)
-  parsestatus(comm_interface("statall"), 3)
-  time.sleep(0.5)
+def get_status(type):
+# default update status
+  if type == 0:
+    parseStatus(comm_interface("status"), 1)
+    time.sleep(0.5)
+    parseStatus(comm_interface("inall"), 2)
+    time.sleep(0.5)
+    parseStatus(comm_interface("statall"), 3)
+# update time using gps
+  if type == 1: 
+    parseStatus(comm_interface("status"), 0)
+    time.sleep(0.5)
 
-def parsestatus(data, type):
-  env = list()
+
+def parseStatus(data, type):
+  if type == 0:
+    x = data.split(" ")
+    time = x[3][5:]
+    date = x[4]
+    timeee = datetime.strptime('{} {}'.format(date, time), '%d.%m.%y %H:%M:%S')
+    timeee = timeee + timedelta(hours=3) #>>> !!! OUR TIMEZONE !!!
+    # print(pack, time, timeconv)
+    print(os.system('date --set="{}"'.format(timeee)))
   if type == 1:
     x = data.split(" ")
     pack = x[2][5:]
-    time = x[3][5:]
-    date = x[4]
-    # time = time.split(":")
-    #time[0] = int(time[0]) + 3 #>>> !!! OUR TIMEZONE !!!
-    #timeconv = time[0] + ":" + time[1] 
-    timeee = datetime.strptime('{} {}'.format(date, time), '%d.%m.%y %H:%M:%S')
-    timeee = timeee + timedelta(hours=3)
-    # print(pack, time, timeconv)
-    print(os.system('date --set="{}"'.format(timeee)))
+    settingsUpdate("archive", "packQueue", pack)
   if type == 2:
     x = data.split(",")
     zero_in = x[0][10:]
     one_in = x[1][4:]
-    print(zero_in, one_in)
-    env.append(zero_in)
-    env.append(one_in)
+    carMove = one_in
     settingsUpdate("states", "wheelCounter", zero_in)
     settingsUpdate("states", "drive", one_in)
   if type == 3:
     x = data.split(",")
-    mileage = x[3][8:] #need rework!--------
-    print(mileage)
+    mileage = x[3]
+    mileage = mileage[mileage.find("=")+1:]
+    mileage = mileage[0:mileage.find(";")]
     settingsUpdate("states", "mileage", mileage)
-    env.append(mileage)
-  dumpdata(env)
-  print(env)
-
-def dumpdata(dict):
-  f = open('env.vars', 'wb')
-  pickle.dump(dict, f)
-  f.close
-  print(dict)

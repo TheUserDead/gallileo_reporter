@@ -23,9 +23,11 @@ def settingsRead(type):
       return outlist
     if type == "archive":
       outlist = [];
+      outlist.append(psettj["archive"]["startDump"])
       outlist.append(psettj["archive"]["dateStart"])
       outlist.append(psettj["archive"]["dateEnd"])
       outlist.append(psettj["archive"]["dateReported"])
+      outlist.append(psettj["archive"]["packQueue"])
       return outlist
     if type == "states":
       outlist = [];
@@ -43,14 +45,19 @@ def settingsUpdate(what, who, data):
     with open('settings.json') as file:
       settingsj = file.read()
     psettj = json.loads(settingsj)
+    print(what, who, data)
     if what == "archive":
       archsub = psettj["archive"]
+      if who == "startDump":
+        archsub["startDump"] = data
       if who == "dateStart":
         archsub["dateStart"] = data
       if who == "dateEnd":
         archsub["dateEnd"] = data
       if who == "dateReported":
         archsub["dateReported"] = data
+      if who == "packQueue":
+        archsub["packQueue"] = data
       psettj["archive"] = archsub 
 
     if what == "states":
@@ -64,7 +71,7 @@ def settingsUpdate(what, who, data):
       if who == "timeUpdated":
         statessub["timeUpdated"] = data
       psettj["states"] = statessub
-    with open("settings_test.json", "w") as outfile:
+    with open("settings.json", "w") as outfile:
       json.dump(psettj, outfile, indent=2)
   finally:
     pass

@@ -6,16 +6,19 @@
     },
     "server": {
         "addr": "upd.sysspec.ru",
-        "archUrl": "http://upd.sysspec.ru:5055/?"
+        "archUrl": "http://upd.sysspec.ru:5055/?",
+        "reportingMode": "uploadDump"
     },
     "driver": {
         "car_num": 35,
         "driverid": 1
     },
     "archive": {
+        "startDump": 0,
         "dateStart": "none",
         "dateEnd": "none",
-        "dateReported": "none"
+        "dateReported": "none",
+        "packQueue": 0
     },
     "states": {
         "drive": 0,
