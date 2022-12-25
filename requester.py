@@ -5,6 +5,7 @@ import os
 from datetime import datetime, timedelta
 
 from readsettings import *
+from parsingmod import *
 
 #for access object anywhere
 global ser
@@ -103,20 +104,14 @@ def init_comm():
 #      print(s.hex())
 #      parser(s)
 
-def file_dump(datain, cls):
-  # report_ext(datain[2], datain[8], datain[9], datain[6], datain[13], datain[11], datain[10])
-  with open('datafile.log', 'a') as f:
-    #print('{}'.format(datain), file=f)
-    f.write("{}\n".format(datain))
-    if cls == True: f.close()
-
 def batch_req(start, end):
-  print("<i> Batch request")
+  print("<i> Batch request from {} to {}".format(start, end))
   cls = False
-  end = end + 1
+  end = int(end) + 1
+  start - int(start)
   for n in range(start, end):
     x = "IF {}".format(n)
-    comm_interface(x)
+    s = comm_interface(x)
     if n == end: cls = True
     parser(s, cls) #???????? connected?
 

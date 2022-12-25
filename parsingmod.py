@@ -1,9 +1,12 @@
 import requests
 from datetime import datetime
+from readsettings import *
 #clotch with time definition bcz network unavailable most of time
 global timeclotch; 
+global now;
+global carnum;
 timeclotch = 2022
-seletedschemafle = 0
+seletedschemafle = 0;
 #global datasizes
 datasizes = [];
 #global datanames
@@ -14,6 +17,9 @@ datatypes = [];
 
 def file_attach():
   print("<i> File attach")
+  now = datetime.now()
+  carnumm = settingsRead("driver")
+  carnum = carnumm[0]
   if seletedschemafle is None:
     try: 
       filelist = glob.glob("profiles/*.json") #get all json files on directory
@@ -24,6 +30,7 @@ def file_attach():
         for item in sublist:
           l.append(int(item))
       nearfilefwver = l[min(range(len(l)), key=lambda i: abs(l[i]- soft))] # find near digits of sv
+      global seletedschemafle
       seletedschemafle = "{}-{}.json".format(hard, nearfilefwver) # here we assemble full fle name
       print("Selected file: {}".format(seletedschemafle))
       with open('profiles/{}'.format(seletedschemafle)) as file:
@@ -54,10 +61,10 @@ def parser(dataz, cls):
   for n in range(22):
     datax.append(dataz[pointerjson:][:datasizes[n]].hex())
     pointerjson = pointerjson + datasizes[n]
-  print("------UNCONVERTED DATA!----------")
-  for n in range(22): 
-    out = "dataname: {} data: {}".format(datanames[n], datax[n])
-    print(out)
+  #print("------UNCONVERTED DATA!----------")
+  #for n in range(22): 
+  #  out = "dataname: {} data: {}".format(datanames[n], datax[n])
+  #  print(out)
   #define some vars before read convert type and pre-handle data using data type
   for n in range(22):
     if datatypes[n] == "uint" or datatypes[n] == "int" or datatypes[n] == "sat":
@@ -77,6 +84,9 @@ def parser(dataz, cls):
               datax[n] = 0.000001
               print("<!> Wring data tetected!: {}".format(datax[n]))
         if datanames[n] == "SPD":
+          ### TRACCAR uses knots as default speed system, GALLILEO uses km\h speed display without comma.
+          ### add key in settings to miles\sec and convert km\h to mps\sec here!
+          ### ADD to /conf/traccar.xml <entry key='osmand.speed'>mps</entry> and see true data in traccar!
           datax[n] = (datax[n] / 10) / 3.6
           datax[n] = round(datax[n], 2)
       if datasizes[n] == 1:
@@ -112,11 +122,22 @@ def parser(dataz, cls):
      #print(datetime.utcfromtimestamp(datax[5]).strftime('%Y-%m-%d %H:%M:%S'))
    #datout = "{}".format(datax)
    #print(datax)
-  #file_dump(datax, cls)
+  file_dump(datax, cls)
+
+def file_dump(datain, cls):
+  # report_ext(datain[2], datain[8], datain[9], datain[6], datain[13], datain[11], datain[10])
+  ### NOT checking file exists for failsafe, think about it!
+  with open('car-{}-{}.log'.format(carnum, now), 'a') as f: #####BUG HERE!!! rechcke
+    #print('{}'.format(datain), file=f)
+    f.write("{}\n".format(datain))
+    if cls == True: 
+      f.close()
+      settingsUpdate("archive", "startDump", 0)
+      settingsUpdate("archive", "dateReported", now)
 
 def report_ext(ids, lat, lon, time, hdop, alt, speed):
   print(speed)
-  x = requests.get("http://188.190.220.244:5055/?id={}&lat={}&lon={}&timestamp={}&hdop={}&altitude={}&speed={}".format(ids, lat, lon, time, hdop, alt, speed))
+  x = requests.get("{}id={}&lat={}&lon={}&timestamp={}&hdop={}&altitude={}&speed={}".format(serverurl, ids, lat, lon, time, hdop, alt, speed))
   if x == "<Response [200]>":
     pass
   if x == "<Response [400]>":

@@ -3,6 +3,7 @@ import logging
 import pickle
 import sys
 import time
+import datetime
 
 from requester import *
 from parsingmod import *
@@ -25,6 +26,7 @@ try:
         init_comm()
       if comreq:
         get_status(0) # 0 - is default
+        # get_status(1)
     except serial.serialutil.SerialException as err:
       logging.critical("<!> Com port not found! Check connection! \n Repeat in 3 sec...")
       time.sleep(3)
@@ -32,10 +34,17 @@ try:
     except KeyboardInterrupt:
       print("--- %s seconds ---" % (time.time() - start_time))
       sys.exit()
-    time.sleep(10)
+    time.sleep(60)
+    now = datetime.now()
     reslt = settingsRead("archive")
+    reslt2 = settingsRead("driver")
+    if now.hour == 22 and reslt[0] == 1:
+      print("Start archivating")
+      with open('car-{}-{}.log'.format(reslt2[0], now), 'w') as f: #####BUG HERE!!!
+        f.write("Tracker data dump///")
+      batch_req(0, reslt[4])
     ##???????
-    print(carMove)
+    # print(carMove)
 
   
 except KeyboardInterrupt:

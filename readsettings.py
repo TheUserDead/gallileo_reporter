@@ -1,5 +1,5 @@
 import json
-
+# REWORK TO RETURN DICT!
 def settingsRead(type):
   try:
     with open('settings.json') as file:
