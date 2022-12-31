@@ -10,7 +10,8 @@ from parsingmod import *
 #for access object anywhere
 global ser
 global carMove
-
+global soft;
+global hard;
 
 def check_comm():
   #print("<i> Check comm")
@@ -35,27 +36,30 @@ def serialconn():
     comreq = check_comm();
     if comreq == False:
       init_comm()
-    if comreq:
-      req_ver()
+    file_attach(req_ver("h"), req_ver("s"))
+    print("Detected version: {}-{}".format(req_ver("h"), req_ver("s")))
   except serial.serialutil.SerialException as err:
     logging.critical("<!> Com port not found! Check connection!")
     sys.exit()
 
-def req_ver():
+def req_ver(type):
   #print("<i> Request version")
-  hhw = comm_interface("hardversion").split("=")
-  ssv = comm_interface("status").split("=")
-  ha = hhw[1]
-  sv = ssv[1]
-  ha = ha.split(",")
-  sv = sv.split(".")
-  software = sv[0]
-  global soft 
-  soft = int(software)
-  hardware = ha[0]
-  global hard
-  hard = int(hardware)
-  print("Detected version: {}-{}".format(hard, soft))
+  if type == "h":
+    hhw = comm_interface("hardversion").split("=")
+    ha = hhw[1]
+    ha = ha.split(",")
+    hardware = ha[0]
+    # global hard
+    hard = int(hardware)
+    return hard
+  if type == "s":
+    ssv = comm_interface("status").split("=")
+    sv = ssv[1]
+    sv = sv.split(".")
+    software = sv[0]
+    # global soft
+    soft = int(software)
+    return soft
 
 def init_comm():
   #print("<i> Init com port")
@@ -89,6 +93,14 @@ def init_comm():
     logging.warn("<!> Cannot init com port!")
     sys.exit()
   
+def keep_link():
+  serialcmd = "XYZ ttt"
+  ser.write(serialcmd.encode())
+  time.sleep(1)
+  # s = ser.read_until(b'\x00')
+  s = ser.read(10)
+  print(s)
+
 # def req_arch():
 #   serialcmd = input("ENter page: ")
 #   x = "IF {}".format(serialcmd)
@@ -108,12 +120,17 @@ def batch_req(start, end):
   print("<i> Batch request from {} to {}".format(start, end))
   cls = False
   end = int(end) + 1
-  start - int(start)
+  end = 101
+  start = int(start)
   for n in range(start, end):
     x = "IF {}".format(n)
     s = comm_interface(x)
-    if n == end: cls = True
-    parser(s, cls) #???????? connected?
+    print(n)
+    clss = False
+    if n == end - 1: 
+      clss = True
+    parser(s, clss) #???????? connected?
+
 
 def comm_interface(commandstr):
   #print("<i> Command Interface")
@@ -123,16 +140,14 @@ def comm_interface(commandstr):
   if ser.in_waiting == 0:
     init_comm()
   if ser.in_waiting > 0:
-    ans = ser.read(2)
-    if ans == "IF":
-      ans = ser.read_until(b'\x20') #verify start packet
-      if s.decode() == "IF ":
-        ans = ser.read_until(b'\x20') #bytes size heree
-        ssz = int(s.decode('utf-8')) #convert to right data type
-        print("size = {}".format(ssz)) #report this to console
-        ans = ser.read(ssz) # read data stream from serial counted by received size
-        print("<i> Given databank andwer: {}".format(s.hex()))
-        return str(ans)
+    ans = ser.read(3)
+    if ans.decode('utf-8') == "IF ":
+      ans = ser.read_until(b'\x20') #bytes size heree
+      ssz = int(ans.decode('utf-8')) #convert to right data type
+      #print("size = {}".format(ssz)) #report this to console
+      ans = ser.read(ssz) # read data stream from serial counted by received size
+      #print("<i> Given databank answer: {}".format(ans.hex()))
+      return ans
     if ans != "IF":
       ans = ser.read(ser.in_waiting)
       return str(ans)
@@ -149,6 +164,7 @@ def get_status(type):
   if type == 1: 
     parseStatus(comm_interface("status"), 0)
     time.sleep(0.5)
+    keep_link()
 
 
 def parseStatus(data, type):

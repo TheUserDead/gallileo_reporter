@@ -1,3 +1,4 @@
+import glob
 import requests
 from datetime import datetime
 from readsettings import *
@@ -5,54 +6,60 @@ from readsettings import *
 global timeclotch; 
 global now;
 global carnum;
+global datasizes;
+global datatypes;
+global datanames;
 timeclotch = 2022
 seletedschemafle = 0;
-#global datasizes
+global datasizes
 datasizes = [];
-#global datanames
+global datanames
 datanames = [];
-#global datatypes
+global datatypes
 datatypes = [];
 
 
-def file_attach():
+def file_attach(hard, soft):
   print("<i> File attach")
+  global now;
   now = datetime.now()
   carnumm = settingsRead("driver")
-  carnum = carnumm[0]
-  if seletedschemafle is None:
-    try: 
-      filelist = glob.glob("profiles/*.json") #get all json files on directory
-      files = [word[9:-5] for word in filelist] # magically get only filenames 
-      filesss = [word.split('-') for word in files]
-      l = []
-      for sublist in filesss:
-        for item in sublist:
-          l.append(int(item))
-      nearfilefwver = l[min(range(len(l)), key=lambda i: abs(l[i]- soft))] # find near digits of sv
-      global seletedschemafle
-      seletedschemafle = "{}-{}.json".format(hard, nearfilefwver) # here we assemble full fle name
-      print("Selected file: {}".format(seletedschemafle))
-      with open('profiles/{}'.format(seletedschemafle)) as file:
-        dataj = file.read()
-      parsedj = json.loads(dataj)
-      itemsize = len(parsedj["archive"]["item"]) # size of tags in json schema   
-  #Get data from schema, sizes\names\types
-      for n in range(22):
-        datasizes.append(int(parsedj["archive"]["item"][n]["_size"]))
-  # get names of each data
-      for n in range(22):
-        datanames.append(parsedj["archive"]["item"][n]["_name"])
-      #print(datanames)
-      for n in range(22):
-        datatypes.append(parsedj["archive"]["item"][n]["_format"])
-    except FileNotFoundError as err:
-      logging.critical("JSON SChema not found!")
-      sys.exit()
+  global carnum;
+  carnum = carnumm[0]  
+  try: 
+    filelist = glob.glob("profiles/*.json") #get all json files on directory
+    files = [word[9:-5] for word in filelist] # magically get only filenames 
+    filesss = [word.split('-') for word in files]
+    l = []
+    for sublist in filesss:
+      for item in sublist:
+        l.append(int(item))
+    nearfilefwver = l[min(range(len(l)), key=lambda i: abs(l[i]- soft))] # find near digits of sv
+    global seletedschemafle
+    seletedschemafle = "{}-{}.json".format(hard, nearfilefwver) # here we assemble full fle name
+    print("Selected file: {}".format(seletedschemafle))
+    with open('profiles/{}'.format(seletedschemafle)) as file:
+      dataj = file.read()
+    parsedj = json.loads(dataj)
+    itemsize = len(parsedj["archive"]["item"]) # size of tags in json schema   
+#Get data from schema, sizes\names\types
+    global datasizes;
+    for n in range(22):
+      datasizes.append(int(parsedj["archive"]["item"][n]["_size"]))
+# get names of each data
+    global datanames;
+    for n in range(22):
+      datanames.append(parsedj["archive"]["item"][n]["_name"])
+    #print(datanames)
+    global datatypes;
+    for n in range(22):
+      datatypes.append(parsedj["archive"]["item"][n]["_format"])
+  except FileNotFoundError as err:
+    logging.critical("JSON SChema not found!")
+    sys.exit()
 
-def parser(dataz, cls):
-  file_attach()
-  print("<i> Parser")
+def parser(dataz, clss):
+  # print("<i> Parser")
   #parse data with JSON loaded schema
   pointerjson = 0
   datax = [];
@@ -122,18 +129,20 @@ def parser(dataz, cls):
      #print(datetime.utcfromtimestamp(datax[5]).strftime('%Y-%m-%d %H:%M:%S'))
    #datout = "{}".format(datax)
    #print(datax)
-  file_dump(datax, cls)
+  file_dump(datax, clss)
 
-def file_dump(datain, cls):
+def file_dump(datain, clss):
   # report_ext(datain[2], datain[8], datain[9], datain[6], datain[13], datain[11], datain[10])
   ### NOT checking file exists for failsafe, think about it!
-  with open('car-{}-{}.log'.format(carnum, now), 'a') as f: #####BUG HERE!!! rechcke
+  with open('{}-{}.{}.{}---{}:{}.log'.format(carnum, now.year, now.month, now.day, now.hour, now.minute), 'a') as f: #####BUG HERE!!! rechcke
     #print('{}'.format(datain), file=f)
     f.write("{}\n".format(datain))
-    if cls == True: 
+    if clss == True: 
       f.close()
       settingsUpdate("archive", "startDump", 0)
-      settingsUpdate("archive", "dateReported", now)
+      print("succesful archived")
+      tm = "{}-{}-{}-{}:{}".format(now.year, now.month, now.day, now.hour, now.minute)
+      settingsUpdate("archive", "dateReported", tm)
 
 def report_ext(ids, lat, lon, time, hdop, alt, speed):
   print(speed)
