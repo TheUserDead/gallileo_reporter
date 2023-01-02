@@ -35,13 +35,8 @@ def check_comm():
 def serialconn():
   #print("<i> Serr connn")
   try:
-    global ser;
     global currentserial;
     seri = '/dev/ttyACM{}'.format(currentserial)
-    with serial.Serial as ser:
-        ser.baudrate = 19200
-        ser.port = seri
-        ser.open()
     ser = serial.Serial('/dev/ttyACM0', 19200, bytesize=8, parity='N', timeout=3, rtscts=0, xonxoff=0)
     comreq = check_comm();
     if comreq == False:

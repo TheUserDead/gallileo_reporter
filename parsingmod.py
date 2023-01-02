@@ -1,5 +1,6 @@
 import glob
 import requests
+import logging
 from datetime import datetime
 from readsettings import *
 #clotch with time definition bcz network unavailable most of time
