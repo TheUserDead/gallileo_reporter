@@ -3,15 +3,19 @@ import time
 import pickle
 import os
 from datetime import datetime, timedelta
+import logging
 
 from readsettings import *
 from parsingmod import *
 
 #for access object anywhere
-global ser
-global carMove
+global ser;
+global carMove;
 global soft;
 global hard;
+global currentserial;
+currentserial = 0;
+
 
 def check_comm():
   #print("<i> Check comm")
@@ -31,7 +35,13 @@ def check_comm():
 def serialconn():
   #print("<i> Serr connn")
   try:
-    global ser 
+    global ser;
+    global currentserial;
+    seri = '/dev/ttyACM{}'.format(currentserial)
+    with serial.Serial as ser:
+        ser.baudrate = 19200
+        ser.port = seri
+        ser.open()
     ser = serial.Serial('/dev/ttyACM0', 19200, bytesize=8, parity='N', timeout=3, rtscts=0, xonxoff=0)
     comreq = check_comm();
     if comreq == False:
@@ -39,8 +49,14 @@ def serialconn():
     file_attach(req_ver("h"), req_ver("s"))
     print("Detected version: {}-{}".format(req_ver("h"), req_ver("s")))
   except serial.serialutil.SerialException as err:
-    logging.critical("<!> Com port not found! Check connection!")
-    sys.exit()
+    #logging.critical("<!> Com port not found! Check connection!")
+    print("<!> Com port not found! Check connection! Use {} port".format(seri))
+    print("<i> Try use different serial...")
+    if currentserial > 2:
+      currentserial = 0
+    currentserial += 1
+
+
 
 def req_ver(type):
   #print("<i> Request version")

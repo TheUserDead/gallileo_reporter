@@ -42,8 +42,8 @@ try:
       with open('{}-{}.{}.{}---{}:{}.log'.format(reslt2[0], now.year, now.month, now.day, now.hour, now.minute), 'w') as f: #####BUG HERE!!!
         f.write("Tracker data dump///")
       batch_req(1, reslt[4])
-    ##???????
-    # print(carMove)
+    #???????
+    print(carMove)
 
   
 except KeyboardInterrupt:
