@@ -1,6 +1,8 @@
 import glob
 import requests
 import logging
+import sys
+import tarfile
 from datetime import datetime
 from readsettings import *
 #clotch with time definition bcz network unavailable most of time
@@ -19,6 +21,8 @@ datanames = [];
 global datatypes
 datatypes = [];
 
+if __name__ == "__main__":
+  print("This file is module for main program 'trackerconnector.py' and cannot be used directly. \nPlease call mantioned file!")
 
 def file_attach(hard, soft):
   print("<i> File attach")
@@ -28,17 +32,22 @@ def file_attach(hard, soft):
   global carnum;
   carnum = carnumm[0]  
   try: 
-    filelist = glob.glob("profiles/*.json") #get all json files on directory
-    files = [word[9:-5] for word in filelist] # magically get only filenames 
-    filesss = [word.split('-') for word in files]
-    l = []
-    for sublist in filesss:
-      for item in sublist:
-        l.append(int(item))
-    nearfilefwver = l[min(range(len(l)), key=lambda i: abs(l[i]- soft))] # find near digits of sv
-    global seletedschemafle
-    seletedschemafle = "{}-{}.json".format(hard, nearfilefwver) # here we assemble full fle name
-    print("Selected file: {}".format(seletedschemafle))
+    # filelist = glob.glob("profiles/*.json") #get all json files on directory
+    # print(filelist)
+    # files = [word[9:-5] for word in filelist] # magically get only filenames 
+    # filesss = [word.split('-') for word in files]
+    # l = []
+    # for sublist in filesss:
+    #   for item in sublist:
+    #     l.append(int(item))
+    # nearfilefwver = l[min(range(len(l)), key=lambda i: abs(l[i]- soft))] # find near digits of sv
+    # global seletedschemafle
+    # seletedschemafle = "{}-{}.json".format(hard, nearfilefwver) # here we assemble full fle name
+    # print("Selected file: {}".format(seletedschemafle))
+
+    seletedschemaflee = settingsRead("archive")
+    seletedschemafle = seletedschemaflee[5]
+
     with open('profiles/{}'.format(seletedschemafle)) as file:
       dataj = file.read()
     parsedj = json.loads(dataj)
@@ -135,7 +144,8 @@ def parser(dataz, clss):
 def file_dump(datain, clss):
   # report_ext(datain[2], datain[8], datain[9], datain[6], datain[13], datain[11], datain[10])
   ### NOT checking file exists for failsafe, think about it!
-  with open('{}-{}.{}.{}---{}:{}.log'.format(carnum, now.year, now.month, now.day, now.hour, now.minute), 'a') as f: #####BUG HERE!!! rechcke
+  filename = "{}-{}.{}.{}---{}:{}.log".format(carnum, now.year, now.month, now.day, now.hour, now.minute)
+  with open(filename, 'a') as f: #####BUG HERE!!! rechcke
     #print('{}'.format(datain), file=f)
     f.write("{}\n".format(datain))
     if clss == True: 
@@ -144,6 +154,10 @@ def file_dump(datain, clss):
       print("succesful archived")
       tm = "{}-{}-{}-{}:{}".format(now.year, now.month, now.day, now.hour, now.minute)
       settingsUpdate("archive", "dateReported", tm)
+      with tarfile.open(filename, "w:gz") as tar:
+        tar.add(filename)
+      tar.close()
+      
 
 def report_ext(ids, lat, lon, time, hdop, alt, speed):
   print(speed)

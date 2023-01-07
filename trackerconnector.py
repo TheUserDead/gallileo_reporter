@@ -1,3 +1,5 @@
+#TODO insys parse for batt voltage
+
 import logging
 import pickle
 import sys
@@ -12,13 +14,13 @@ logging.basicConfig(level=logging.INFO, filename="gconnector.log",filemode="a", 
 
 start_time = time.time()
 
-try:
-  serialconn()
-except serial.serialutil.SerialException as err:
-  logging.critical("<!> Com port not found! Check connection!")
-  sys.exit()#need exit or try again? I think need report this data-------------REWORK
-try:
-  while 1:
+def main():
+  while True:
+    try:
+      serialconn()
+    except serial.serialutil.SerialException as err:
+      logging.critical("<!> Com port not found! Check connection!")
+
     try:
       comreq = check_comm();
       if comreq == False:
@@ -26,6 +28,16 @@ try:
       if comreq:
         get_status(0) # 0 - is default
         get_status(1)
+      time.sleep(10)
+      now = datetime.now()
+      reslt = settingsRead("archive")
+      reslt2 = settingsRead("driver")
+      if reslt[0] == 1:
+        print("Start archivating")
+        with open('{}-{}.{}.{}---{}:{}.log'.format(reslt2[0], now.year, now.month, now.day, now.hour, now.minute), 'w') as f: #####BUG HERE!!!
+          f.write("Tracker data dump///")
+        batch_req(1, reslt[4])
+    #???????
     except serial.serialutil.SerialException as err:
       logging.critical("<!> Com port not found! Check connection! \n Repeat in 3 sec...")
       time.sleep(3)
@@ -33,21 +45,12 @@ try:
     except KeyboardInterrupt:
       print("--- %s seconds ---" % (time.time() - start_time))
       sys.exit()
-    time.sleep(10)
-    now = datetime.now()
-    reslt = settingsRead("archive")
-    reslt2 = settingsRead("driver")
-    if now.hour == 14 and reslt[0] == 1:
-      print("Start archivating")
-      with open('{}-{}.{}.{}---{}:{}.log'.format(reslt2[0], now.year, now.month, now.day, now.hour, now.minute), 'w') as f: #####BUG HERE!!!
-        f.write("Tracker data dump///")
-      batch_req(1, reslt[4])
-    #???????
-    print(carMove)
-
+    # except termios.error:
+    #   print("<!> Unexpected communication error! Reconnect...")
+    #   time.sleep(3)
+    #   serialconn()
   
-except KeyboardInterrupt:
-    print("--- %s seconds ---" % (time.time() - start_time))
+main()
 
 #AVAILABLE DATATYPES
 # uint\int - integer little endian possible the same just byte size 8x 16x 32x 64x etc.

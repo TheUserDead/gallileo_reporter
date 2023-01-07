@@ -16,6 +16,8 @@ global hard;
 global currentserial;
 currentserial = 0;
 
+if __name__ == "__main__":
+  print("This file is module for main program 'trackerconnector.py' and cannot be used directly. \nPlease call mantioned file!")
 
 def check_comm():
   #print("<i> Check comm")
@@ -33,23 +35,31 @@ def check_comm():
     return False
 
 def serialconn():
+  global currentserial;
   #print("<i> Serr connn")
-  try:
-    global currentserial;
-    seri = '/dev/ttyACM{}'.format(currentserial)
-    ser = serial.Serial('/dev/ttyACM0', 19200, bytesize=8, parity='N', timeout=3, rtscts=0, xonxoff=0)
-    comreq = check_comm();
-    if comreq == False:
-      init_comm()
-    file_attach(req_ver("h"), req_ver("s"))
-    print("Detected version: {}-{}".format(req_ver("h"), req_ver("s")))
-  except serial.serialutil.SerialException as err:
-    #logging.critical("<!> Com port not found! Check connection!")
-    print("<!> Com port not found! Check connection! Use {} port".format(seri))
-    print("<i> Try use different serial...")
-    if currentserial > 2:
-      currentserial = 0
-    currentserial += 1
+  notInitializedPort = True;
+  while notInitializedPort:
+    try:
+      # global currentserial;
+      global ser;
+      seri = '/dev/ttyACM{}'.format(currentserial)
+      ser = serial.Serial(seri, 19200, bytesize=8, parity='N', timeout=3, rtscts=0, xonxoff=0)
+      print("<i> Succesful use {} port".format(seri))
+      comreq = check_comm();
+      if comreq == False:
+        init_comm()
+      file_attach(req_ver("h"), req_ver("s"))
+      print("Detected version: {}-{}".format(req_ver("h"), req_ver("s")))
+      notInitializedPort = False
+      initial_devconf()
+    except serial.serialutil.SerialException as err:
+      #logging.critical("<!> Com port not found! Check connection!")
+      print("<!> Com port not found! Check connection! Use {} port".format(seri))
+      time.sleep(5)
+      print("<i> Try use different serial...")
+      currentserial += 1
+      if currentserial > 2:
+        currentserial = 0
 
 
 
@@ -62,6 +72,7 @@ def req_ver(type):
     hardware = ha[0]
     # global hard
     hard = int(hardware)
+    print(hard)
     return hard
   if type == "s":
     ssv = comm_interface("status").split("=")
@@ -70,42 +81,61 @@ def req_ver(type):
     software = sv[0]
     # global soft
     soft = int(software)
+    print(soft)
     return soft
 
 def init_comm():
-  #print("<i> Init com port")
-  if ser.in_waiting > 0:
-    ser.flush()
-  serialcmd = "<CMD REGIME 192837465>"
-  ser.write(serialcmd.encode())
-  time.sleep(1)
-  s = ser.read(25)        # read up to ten bytes (timeout)
-  print(s)
-  if len(s.decode()) == 0:
-    time.sleep(5)
+  print("<i> Init com port")
+  global notInitializedPort;
+  notInitializedPort = True;
+  while notInitializedPort:
+    if ser.in_waiting > 0:
+      ser.flush()
+    serialcmd = "<CMD REGIME 192837465>"
     ser.write(serialcmd.encode())
     time.sleep(1)
-    s = ser.read(25)
+    s = ser.read(25)        # read up to ten bytes (timeout)
     print(s)
-  serialcmd = "XYZ ttt"
-  ser.write(serialcmd.encode())
-  time.sleep(1)
-  s = ser.read_until(b'\x00')
-  print(s)
-  serialcmd = "XYZ 0"
-  ser.write(serialcmd.encode())
-  time.sleep(1)
-  s = ser.read(10)
-  if s == (b'XYZ OK\x00'):
+    while len(s.decode()) == 0:
+      print("<i> Cannot get answer, repeating request with predicted answer...")
+      time.sleep(5)
+      ser.write(serialcmd.encode())
+      time.sleep(1)
+      s = ser.read(25)
+      print(s)
+    serialcmd = "XYZ ttt"
+    ser.write(serialcmd.encode())
+    time.sleep(1)
+    s = ser.read_until(b'\x00')
     print(s)
-    print("<i> Com init complete")
-    ser.flush()
-  else:
-    logging.warn("<!> Cannot init com port!")
-    sys.exit()
+    if s == (b'XYZ OK\x00'):
+      serialcmd = "XYZ 0"
+      ser.write(serialcmd.encode())
+      time.sleep(1)
+      s = ser.read(10)
+      if s == (b'XYZ OK\x00'):
+        print(s)
+        notInitializedPort = False
+        print("<i> Com init complete {}".format(notInitializedPort))
+        ser.flush()
+      else:
+        logging.warn("<!> Cannot init com port!")
+        sys.exit()
+
+def initial_devconf():
+  x = settingsRead("initial")
+  if x[0] == 0:
+    print("<i> Setting up default paramaters: \n   -IN0 - Wheel counter\n   -IN1 - Ignition\n   -Device ID as settings.json")
+    print(comm_interface("incfg0 1,2,8000,8000,8000,8000,1"))
+    print(comm_interface("incfg1 0,5,10000,33000,0,9016,0"))
+    idd = settingsRead("driver")
+    print(comm_interface("ID {}").format(idd[0]))
+    settingsUpdate("initial", "configured", 1)
+  if x[0] == 1:
+    print("<i> Already configured device")
   
-def keep_link():
-  serialcmd = "XYZ ttt"
+def keep_link():   # This soubrotine working sort of "keep alive" logic. COM port can be disabled by device sometimes.
+  serialcmd = "<CMD REGIME 192837465>"
   ser.write(serialcmd.encode())
   time.sleep(1)
   # s = ser.read_until(b'\x00')
@@ -131,7 +161,6 @@ def batch_req(start, end):
   print("<i> Batch request from {} to {}".format(start, end))
   cls = False
   end = int(end) + 1
-  end = 101
   start = int(start)
   for n in range(start, end):
     x = "IF {}".format(n)

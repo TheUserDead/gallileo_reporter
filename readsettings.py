@@ -1,4 +1,8 @@
 import json
+
+if __name__ == "__main__":
+  print("This file is module for main program 'trackerconnector.py' and cannot be used directly. \nPlease call mantioned file!")
+
 # REWORK TO RETURN DICT!
 def settingsRead(type):
   try:
@@ -28,6 +32,7 @@ def settingsRead(type):
       outlist.append(psettj["archive"]["dateEnd"])
       outlist.append(psettj["archive"]["dateReported"])
       outlist.append(psettj["archive"]["packQueue"])
+      outlist.append(psettj["archive"]["profileFile"])
       return outlist
     if type == "states":
       outlist = [];
@@ -36,6 +41,9 @@ def settingsRead(type):
       outlist.append(psettj["states"]["wheelCounter"])
       outlist.append(psettj["states"]["timeUpdated"])
       return outlist
+    if type == "initial":
+      outlist = [];
+      outlist.append(psettj["initial"]["configured"])
   except FileNotFoundError:
     print("Settings file not found!")
     sys.exit()
@@ -59,6 +67,11 @@ def settingsUpdate(what, who, data):
       if who == "packQueue":
         archsub["packQueue"] = data
       psettj["archive"] = archsub 
+    
+    if what == "initial":
+      if who == "configured":
+        initsub["configured"] = data
+      psettj["initial"]= initsub
 
     if what == "states":
       statessub = psettj["states"]

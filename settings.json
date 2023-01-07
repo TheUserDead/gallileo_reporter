@@ -1,4 +1,7 @@
 {
+    "initial": {
+        "configured": 0
+    },
     "mqtt": {
         "mqttAddr": "upd.sysspec.ru",
         "name": "car035",
@@ -18,7 +21,8 @@
         "dateStart": "none",
         "dateEnd": "none",
         "dateReported": "none",
-        "packQueue": 0
+        "packQueue": 0,
+        "profileFile": "11-229.json"
     },
     "states": {
         "drive": 0,
