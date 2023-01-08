@@ -22,7 +22,8 @@
         "dateEnd": "none",
         "dateReported": "none",
         "packQueue": 0,
-        "profileFile": "11-229.json"
+        "profileFile": "11-229.json",
+        "timeArchHour": "12"
     },
     "states": {
         "drive": 0,

@@ -22,7 +22,7 @@ global datatypes
 datatypes = [];
 
 if __name__ == "__main__":
-  print("This file is module for main program 'trackerconnector.py' and cannot be used directly. \nPlease call mantioned file!")
+  print("This file is module for main program 'trackerconnector.py' and cannot be used directly. \nPlease call mentioned file!")
 
 def file_attach(hard, soft):
   print("<i> File attach")

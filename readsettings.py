@@ -1,7 +1,7 @@
 import json
 
 if __name__ == "__main__":
-  print("This file is module for main program 'trackerconnector.py' and cannot be used directly. \nPlease call mantioned file!")
+  print("This file is module for main program 'trackerconnector.py' and cannot be used directly. \nPlease call mentioned file!")
 
 # REWORK TO RETURN DICT!
 def settingsRead(type):
@@ -33,6 +33,7 @@ def settingsRead(type):
       outlist.append(psettj["archive"]["dateReported"])
       outlist.append(psettj["archive"]["packQueue"])
       outlist.append(psettj["archive"]["profileFile"])
+      outlist.append(psettj["archive"]["timeArchHour"])
       return outlist
     if type == "states":
       outlist = [];
@@ -44,9 +45,14 @@ def settingsRead(type):
     if type == "initial":
       outlist = [];
       outlist.append(psettj["initial"]["configured"])
+      return outlist
   except FileNotFoundError:
-    print("Settings file not found!")
-    sys.exit()
+    print("<!> Settings file not found!")
+    sys.exit() #rework
+  except KeyError:
+    print("<!> Something wrong with JSON keys, config is UP to DATE?")
+  except TypeError:
+    print("<!> Something wrong with JSON keys, config is UP to DATE?")
 
 def settingsUpdate(what, who, data):
   try:
@@ -66,13 +72,14 @@ def settingsUpdate(what, who, data):
         archsub["dateReported"] = data
       if who == "packQueue":
         archsub["packQueue"] = data
-      psettj["archive"] = archsub 
-    
+      if who == "timeArchHour":
+        archsub["timeArchHour"] = data
+      psettj["archive"] = archsub
     if what == "initial":
+      initsub = psettj["initial"]
       if who == "configured":
         initsub["configured"] = data
       psettj["initial"]= initsub
-
     if what == "states":
       statessub = psettj["states"]
       if who == "drive":

@@ -14,13 +14,17 @@ logging.basicConfig(level=logging.INFO, filename="gconnector.log",filemode="a", 
 
 start_time = time.time()
 
-def main():
-  while True:
-    try:
-      serialconn()
-    except serial.serialutil.SerialException as err:
-      logging.critical("<!> Com port not found! Check connection!")
+global triggerHour;
 
+def main():
+  try:
+    serialconn()
+    x = settingsRead("archive")
+    triggerHour = int(x[6])
+  except serial.serialutil.SerialException as err:
+    logging.critical("<!> Com port not found! Check connection!")
+
+  while True:
     try:
       comreq = check_comm();
       if comreq == False:
@@ -32,7 +36,7 @@ def main():
       now = datetime.now()
       reslt = settingsRead("archive")
       reslt2 = settingsRead("driver")
-      if reslt[0] == 1:
+      if reslt[0] == 1 and now.hour == triggerHour:
         print("Start archivating")
         with open('{}-{}.{}.{}---{}:{}.log'.format(reslt2[0], now.year, now.month, now.day, now.hour, now.minute), 'w') as f: #####BUG HERE!!!
           f.write("Tracker data dump///")

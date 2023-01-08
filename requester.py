@@ -17,7 +17,7 @@ global currentserial;
 currentserial = 0;
 
 if __name__ == "__main__":
-  print("This file is module for main program 'trackerconnector.py' and cannot be used directly. \nPlease call mantioned file!")
+  print("This file is module for main program 'trackerconnector.py' and cannot be used directly. \nPlease call mentioned file!")
 
 def check_comm():
   #print("<i> Check comm")
@@ -127,9 +127,12 @@ def initial_devconf():
   if x[0] == 0:
     print("<i> Setting up default paramaters: \n   -IN0 - Wheel counter\n   -IN1 - Ignition\n   -Device ID as settings.json")
     print(comm_interface("incfg0 1,2,8000,8000,8000,8000,1"))
+    time.sleep(1)
     print(comm_interface("incfg1 0,5,10000,33000,0,9016,0"))
+    time.sleep(1)
     idd = settingsRead("driver")
-    print(comm_interface("ID {}").format(idd[0]))
+    print(comm_interface("ID {}".format(idd[0])))
+    time.sleep(1)
     settingsUpdate("initial", "configured", 1)
   if x[0] == 1:
     print("<i> Already configured device")
@@ -138,8 +141,8 @@ def keep_link():   # This soubrotine working sort of "keep alive" logic. COM por
   serialcmd = "<CMD REGIME 192837465>"
   ser.write(serialcmd.encode())
   time.sleep(1)
-  # s = ser.read_until(b'\x00')
-  s = ser.read(10)
+  s = ser.read_until(b'\x00')
+  # s = ser.read(22)
   print(s)
 
 # def req_arch():
@@ -189,7 +192,8 @@ def comm_interface(commandstr):
       #print("<i> Given databank answer: {}".format(ans.hex()))
       return ans
     if ans != "IF":
-      ans = ser.read(ser.in_waiting)
+      while ser.in_waiting > 0:
+        ans = ser.read(ser.in_waiting)
       return str(ans)
 
 def get_status(type):

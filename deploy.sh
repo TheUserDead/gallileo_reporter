@@ -1,4 +1,5 @@
 #!/bin/bash
+#Need Python 3.8+
 echo "This script installs all need environment for this project"
 apt install python3 -y
 apt install python3-pip -y
@@ -12,5 +13,6 @@ locale-gen en_US.UTF-8
 pip3 install pyserial
 pip3 install python-daemon
 pip3 install requests
+#pip3 install pysftp
 
 echo "Completed! \nRead README for understand what is all for."

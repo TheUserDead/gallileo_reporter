@@ -1,10 +1,20 @@
 import json
 from readsettings import *
 import logging
-import paho.mqtt.client as mqtt
 import time
 
+import paho.mqtt.client as mqtt
+import ftplib
+
+
 logging.basicConfig(level=logging.INFO, filename="greporter.log",filemode="a", format="%(asctime)s %(levelname)s %(message)s")
+
+def uploads(archfile):
+  session = ftplib.FTP('server.address.com','USERNAME','PASSWORD')
+  file = open(archfile,'rb') 
+  session.storbinary('STOR {}'.format(archfile), file)     # send the file
+  file.close()                                    # close file and FTP
+  session.quit()
 
 
 def on_message(client, userdata, msg):
