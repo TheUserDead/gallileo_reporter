@@ -2,7 +2,6 @@ import glob
 import requests
 import logging
 import sys
-import tarfile
 from datetime import datetime
 from readsettings import *
 #clotch with time definition bcz network unavailable most of time
@@ -145,6 +144,7 @@ def file_dump(datain, clss):
   # report_ext(datain[2], datain[8], datain[9], datain[6], datain[13], datain[11], datain[10])
   ### NOT checking file exists for failsafe, think about it!
   filename = "{}-{}.{}.{}---{}:{}.log".format(carnum, now.year, now.month, now.day, now.hour, now.minute)
+  filename = "arch/{}".format(filename)
   with open(filename, 'a') as f: #####BUG HERE!!! rechcke
     #print('{}'.format(datain), file=f)
     f.write("{}\n".format(datain))
@@ -154,9 +154,6 @@ def file_dump(datain, clss):
       print("succesful archived")
       tm = "{}-{}-{}-{}:{}".format(now.year, now.month, now.day, now.hour, now.minute)
       settingsUpdate("archive", "dateReported", tm)
-      with tarfile.open(filename, "w:gz") as tar:
-        tar.add(filename)
-      tar.close()
       
 
 def report_ext(ids, lat, lon, time, hdop, alt, speed):

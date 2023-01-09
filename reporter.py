@@ -2,20 +2,42 @@ import json
 from readsettings import *
 import logging
 import time
+import datetime
+import glob
 
 import paho.mqtt.client as mqtt
 import ftplib
-
+import tarfile
+import os.path
+import requests
 
 logging.basicConfig(level=logging.INFO, filename="greporter.log",filemode="a", format="%(asctime)s %(levelname)s %(message)s")
+now = datetime.now()
+
+
+def connected_to_internet(url='http://1.1.1.1', timeout=5):
+  try:
+    _ = requests.head(url, timeout=timeout)
+    return True
+  except requests.ConnectionError:
+    print("No internet connection available.")
+  return False
+
 
 def uploads(archfile):
-  session = ftplib.FTP('server.address.com','USERNAME','PASSWORD')
+  x = settingsRead("server")
+  ftpServer = x[2]
+  ftpUser = x[3]
+  ftpPass = x[4]
+  session = ftplib.FTP(ftpServer,ftpUser,ftpPass)
   file = open(archfile,'rb') 
   session.storbinary('STOR {}'.format(archfile), file)     # send the file
   file.close()                                    # close file and FTP
   session.quit()
 
+def make_tarfile(output_filename, source_dir):
+  with tarfile.open(output_filename, "w:gz") as tar:
+    tar.add(source_dir, arcname=os.path.basename(source_dir))
 
 def on_message(client, userdata, msg):
   print(msg.topic+" "+str(msg.payload))
@@ -38,7 +60,7 @@ def main():
     time.sleep(30)
     states = settingsRead("states")
     print(states)
-    
+    main_two()
     try:
       mqttData = [];
       mqttData = settingsRead("mqtt")
@@ -56,3 +78,12 @@ def main():
       logging.warn("Cannot connect to MQTT server!")
     except KeyboardInterrupt:
       client.publish("EnvMetrics/CarTrackers/{}/status".format(mqttData[1]), payload="offline", qos=0, retain=False)
+
+def main_two():
+  print(connected_to_internet)
+  if connected_to_internet:
+    filelist = glob.glob("arch/*.log")
+    print(filelist)
+    drv = settingsRead("driver")
+    filename = "{}-{}.{}.{}---{}:{}".format(drv[0], now.year, now.month, now.day, now.hour, now.minute)
+    make_tarfile(filename, "arch/")

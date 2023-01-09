@@ -10,7 +10,10 @@
     "server": {
         "addr": "upd.sysspec.ru",
         "archUrl": "http://upd.sysspec.ru:5055/?",
-        "reportingMode": "uploadDump"
+        "reportingMode": "uploadDump",
+        "ftpServer": "upd.sysspec.ru",
+        "ftpUser": "user",
+        "ftpPass": "pass"
     },
     "driver": {
         "car_num": 35,
@@ -23,7 +26,7 @@
         "dateReported": "none",
         "packQueue": 0,
         "profileFile": "11-229.json",
-        "timeArchHour": "12"
+        "timeArchHour": 12
     },
     "states": {
         "drive": 0,

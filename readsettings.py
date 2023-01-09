@@ -13,6 +13,9 @@ def settingsRead(type):
       outlist = [];
       outlist.append(psettj["server"]["addr"])
       outlist.append(psettj["server"]["archUrl"])
+      outlist.append(psettj["server"]["ftpServer"])
+      outlist.append(psettj["server"]["ftpUser"])
+      outlist.append(psettj["server"]["ftpPass"])
       return outlist
     if type == "mqtt":
       outlist = [];

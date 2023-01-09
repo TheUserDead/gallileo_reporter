@@ -5,6 +5,7 @@ import pickle
 import sys
 import time
 import datetime
+import os.path
 
 from requester import *
 from parsingmod import *
@@ -17,10 +18,10 @@ start_time = time.time()
 global triggerHour;
 
 def main():
+  path = '/home/gallileo_reporter/'
+  print(os.path.basename(path))
   try:
     serialconn()
-    x = settingsRead("archive")
-    triggerHour = int(x[6])
   except serial.serialutil.SerialException as err:
     logging.critical("<!> Com port not found! Check connection!")
 
@@ -30,12 +31,16 @@ def main():
       if comreq == False:
         init_comm()
       if comreq:
+        x = settingsRead("archive")
+        triggerHour = int(x[6])
         get_status(0) # 0 - is default
         get_status(1)
       time.sleep(10)
       now = datetime.now()
       reslt = settingsRead("archive")
       reslt2 = settingsRead("driver")
+      if reslt[0] == 0 and now.hour == 9: # reset flag for new everyday dump
+        settingsUpdate("archive", "startDump", 1)
       if reslt[0] == 1 and now.hour == triggerHour:
         print("Start archivating")
         with open('{}-{}.{}.{}---{}:{}.log'.format(reslt2[0], now.year, now.month, now.day, now.hour, now.minute), 'w') as f: #####BUG HERE!!!

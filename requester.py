@@ -27,7 +27,8 @@ def check_comm():
   #print("Waiting data: {}".format(ser.in_waiting))
   if ser.in_waiting > 0:
     s = ser.read(ser.in_waiting)
-    if s == (b'XYZ OK\x00'):
+    # if s == (b'XYZ OK\x00'):
+    if len(s.decode()) > 4:
       ser.flush()
       time.sleep(0.5)
       return True
